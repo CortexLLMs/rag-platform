@@ -1,0 +1,52 @@
+# ── Version control ───────────────────────────────────────────
+.git
+.gitignore
+
+# ── Python artifacts ──────────────────────────────────────────
+__pycache__
+*.py[cod]
+*.pyo
+*.egg-info
+dist
+build
+.pytest_cache
+.mypy_cache
+.coverage
+htmlcov/
+
+# ── Virtual environments ─────────────────────────────────────
+.venv
+venv
+env
+
+# ── Environment & secrets ────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── IDE & editor ─────────────────────────────────────────────
+.vscode
+.idea
+*.swp
+*.swo
+
+# ── Docker ───────────────────────────────────────────────────
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# ── Local databases & temp files ─────────────────────────────
+*.db
+*.sqlite3
+*.sqlite
+
+# ── OS files ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Documentation ────────────────────────────────────────────
+*.md
+LICENSE
+
+# ── OpenCode config (contains secrets) ───────────────────────
+opencode.json

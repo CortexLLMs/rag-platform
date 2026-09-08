@@ -1,0 +1,33 @@
+# Caddyfile – RAG Platform reverse proxy
+#
+# The {$DOMAIN_NAME} placeholder is resolved from the environment variable
+# passed in docker-compose.prod.yml or .env.
+#
+# Usage:  docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+{$DOMAIN_NAME} {
+    # ── Reverse proxy to FastAPI ──────────────────────────────
+    reverse_proxy api:8000 {
+        # Disable response buffering so SSE streams are forwarded
+        # token-by-token without waiting for the full response.
+        flush_interval -1
+
+        # Health-check header for the upstream.
+        health_uri /health
+        health_interval 10s
+    }
+
+    # ── Security headers ─────────────────────────────────────
+    header {
+        X-Content-Type-Options    nosniff
+        X-Frame-Options           DENY
+        Referrer-Policy           strict-origin-when-cross-origin
+        -Server
+    }
+
+    # ── Logging ──────────────────────────────────────────────
+    log {
+        output stdout
+        format json
+    }
+}

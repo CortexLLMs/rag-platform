@@ -1,0 +1,337 @@
+/* ── RAG Chat Widget ──────────────────────────────────────────── */
+
+/* ── Reset & Container ──────────────────────────────────────── */
+.rag-widget-host *,
+.rag-widget-host *::before,
+.rag-widget-host *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.rag-widget-host {
+  all: initial;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1a1a2e;
+  direction: ltr;
+  text-align: left;
+}
+
+/* ── Floating Button ────────────────────────────────────────── */
+.rag-widget-toggle {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2147483647;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.45);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rag-widget-toggle:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.55);
+}
+
+.rag-widget-toggle svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.3s ease;
+}
+
+.rag-widget-toggle.rag-widget-open svg {
+  transform: rotate(90deg);
+}
+
+/* ── Chat Window ────────────────────────────────────────────── */
+.rag-widget-window {
+  position: fixed;
+  bottom: 92px;
+  right: 24px;
+  z-index: 2147483647;
+  width: 380px;
+  max-width: calc(100vw - 48px);
+  height: 520px;
+  max-height: calc(100vh - 140px);
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.92) translateY(12px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.22s ease;
+}
+
+.rag-widget-window.rag-widget-visible {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.rag-widget-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.rag-widget-header-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rag-widget-header-avatar svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.rag-widget-header-text {
+  flex: 1;
+}
+
+.rag-widget-header-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.rag-widget-header-subtitle {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+/* ── Messages ───────────────────────────────────────────────── */
+.rag-widget-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+}
+
+.rag-widget-messages::-webkit-scrollbar {
+  width: 5px;
+}
+
+.rag-widget-messages::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+/* ── Chat Bubbles ───────────────────────────────────────────── */
+.rag-widget-bubble {
+  max-width: 82%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  word-break: break-word;
+  animation: rag-widget-fadeIn 0.25s ease;
+}
+
+@keyframes rag-widget-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rag-widget-bubble-user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #6366f1, #7c3aed);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.rag-widget-bubble-assistant {
+  align-self: flex-start;
+  background: #f3f4f6;
+  color: #1a1a2e;
+  border-bottom-left-radius: 4px;
+}
+
+.rag-widget-bubble-error {
+  align-self: flex-start;
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* ── Typing Indicator ───────────────────────────────────────── */
+.rag-widget-typing {
+  align-self: flex-start;
+  display: flex;
+  gap: 4px;
+  padding: 10px 16px;
+  background: #f3f4f6;
+  border-radius: 14px;
+  border-bottom-left-radius: 4px;
+}
+
+.rag-widget-typing-dot {
+  width: 7px;
+  height: 7px;
+  background: #9ca3af;
+  border-radius: 50%;
+  animation: rag-widget-bounce 1.2s infinite ease-in-out;
+}
+
+.rag-widget-typing-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.rag-widget-typing-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes rag-widget-bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.7);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ── Input Area ─────────────────────────────────────────────── */
+.rag-widget-input-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.rag-widget-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: #f9fafb;
+}
+
+.rag-widget-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+  background: #fff;
+}
+
+.rag-widget-input::placeholder {
+  color: #9ca3af;
+}
+
+.rag-widget-send {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.rag-widget-send:hover:not(:disabled) {
+  transform: scale(1.06);
+}
+
+.rag-widget-send:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.rag-widget-send svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ── Powered-by Badge ───────────────────────────────────────── */
+.rag-widget-badge {
+  text-align: center;
+  padding: 6px;
+  font-size: 10px;
+  color: #9ca3af;
+  background: #f9fafb;
+  border-top: 1px solid #f3f4f6;
+  flex-shrink: 0;
+}
+
+.rag-widget-badge a {
+  color: #6366f1;
+  text-decoration: none;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 440px) {
+  .rag-widget-window {
+    right: 12px;
+    bottom: 80px;
+    width: calc(100vw - 24px);
+    height: calc(100vh - 100px);
+    border-radius: 12px;
+  }
+
+  .rag-widget-toggle {
+    bottom: 16px;
+    right: 16px;
+  }
+}

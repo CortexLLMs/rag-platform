@@ -1,0 +1,45 @@
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Docker
+docker-compose.override.yml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OpenCode / personal tool configs
+opencode.json
+opencode.jsonc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project artifacts
+widget-screenshot.png
+stream-*.png
+test_widget.py
+test_stream.py
+test-host.html
+
+# Qdrant data (never commit volumes)
+qdrant_data/

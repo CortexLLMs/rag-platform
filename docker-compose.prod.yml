@@ -1,0 +1,41 @@
+# ── Production Compose (extends base docker-compose.yml) ──────
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+
+services:
+  # ── Caddy Reverse Proxy / SSL Termination ──────────────────
+  caddy:
+    image: caddy:alpine
+    container_name: rag-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_started
+    networks:
+      - rag-network
+
+  # ── Override: API (no host port exposure in production) ─────
+  api:
+    # Remove host port binding — only reachable via Caddy on the Docker network.
+    ports: !override []
+
+  # ── Override: Qdrant (no host port exposure in production) ──
+  qdrant:
+    # Remove host port bindings — internal only, never public.
+    ports: !override []
+
+# ── Persistent Storage ────────────────────────────────────────
+volumes:
+  qdrant_data:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
